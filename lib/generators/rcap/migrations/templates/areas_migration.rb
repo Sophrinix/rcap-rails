@@ -1,4 +1,4 @@
-class CreateAreas < ActiveRecord::Migration
+class CreateAreasTable < ActiveRecord::Migration
   def self.up
     create_table :areas do |t|
       t.integer :alert_id

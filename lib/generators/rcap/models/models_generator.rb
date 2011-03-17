@@ -1,6 +1,6 @@
 module Rcap
   module Generators
-    class ModelsGenerator < Rails::Generator::NamedBase
+    class ModelsGenerator < Rails::Generators::Base
       desc <<DESC
 Description:
     Copy RCAP models to your application.
@@ -15,7 +15,11 @@ DESC
       end
 
       def copy_model_files
-        directory 'rcap'
+        directory 'models', 'app/models'
+      end
+
+      def copy_lib_files
+        copy_file 'modules/rcap.rb', 'lib/rcap.rb'
       end
 
       private

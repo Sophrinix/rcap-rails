@@ -1,4 +1,4 @@
-class CreateInfos < ActiveRecord::Migration
+class CreateInfosTable < ActiveRecord::Migration
   def self.up
     create_table :infos do |t|
       t.integer :alert_id

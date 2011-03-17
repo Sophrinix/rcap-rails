@@ -1,4 +1,4 @@
-class CreateResources < ActiveRecord::Migration
+class CreateResourcesTable < ActiveRecord::Migration
   def self.up
     create_table :resources do |t|
       t.integer :alert_id
