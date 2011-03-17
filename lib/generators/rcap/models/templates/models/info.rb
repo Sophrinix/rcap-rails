@@ -14,6 +14,13 @@ class Info < ActiveRecord::Base
   has_many :areas
   has_many :resources
 
+  serialize :categories
+  serialize :response_types
+  serialize :event_codes
+  serialize :parameters
+
+  before_create :set_language
+
   CATEGORY_GEO       = "Geo"       # :nodoc:
   CATEGORY_MET       = "Met"       # :nodoc:
   CATEGORY_SAFETY    = "Safety"    # :nodoc:
@@ -122,63 +129,63 @@ class Info < ActiveRecord::Base
   validates_inclusion_of_members_of( :categories,     :in  => VALID_CATEGORIES,     :allow_blank => true )
   validates_collection_of( :resources, :areas )
 
-  attr_accessor( :event )
-	# Value can only be one of VALID_URGENCIES
-	attr_accessor( :urgency )
-	# Value can only be one of VALID_SEVERITIES
-	attr_accessor( :severity )
-	# Value can only be one of VALID_CERTAINTIES
-	attr_accessor( :certainty )
-	attr_accessor( :language )
-	attr_accessor( :audience )
-	# Effective start time of information
-	attr_accessor( :effective )
-	# Expected start of event
-	attr_accessor( :onset )
-	# Effective expiry time of information
-	attr_accessor( :expires )
-	attr_accessor( :sender_name )
-	attr_accessor( :headline )
-	attr_accessor( :description )
-	attr_accessor( :instruction )
-	attr_accessor( :web )
-	attr_accessor( :contact )
+  #   attr_accessor( :event )
+  # # Value can only be one of VALID_URGENCIES
+  # attr_accessor( :urgency )
+  # # Value can only be one of VALID_SEVERITIES
+  # attr_accessor( :severity )
+  # # Value can only be one of VALID_CERTAINTIES
+  # attr_accessor( :certainty )
+  # attr_accessor( :language )
+  # attr_accessor( :audience )
+  # # Effective start time of information
+  # attr_accessor( :effective )
+  # # Expected start of event
+  # attr_accessor( :onset )
+  # # Effective expiry time of information
+  # attr_accessor( :expires )
+  # attr_accessor( :sender_name )
+  # attr_accessor( :headline )
+  # attr_accessor( :description )
+  # attr_accessor( :instruction )
+  # attr_accessor( :web )
+  # attr_accessor( :contact )
+  #
+  # # Collection of textual categories; elements can be one of VALID_CATEGORIES
+  #   attr_reader( :categories )
+  # #  Collection of textual response types
+  # attr_reader( :response_types )
+  # # Collectoin of EventCode objects
+  # attr_reader( :event_codes )
+  # # Collection of Parameter objects
+  # attr_reader( :parameters )
+  # # Collection of Resource objects
+  # attr_reader( :resources )
+  # # Collection of Area objects
+  # attr_reader( :areas )
 
-	# Collection of textual categories; elements can be one of VALID_CATEGORIES
-  attr_reader( :categories )
-	#  Collection of textual response types
-	attr_reader( :response_types )
-	# Collectoin of EventCode objects
-	attr_reader( :event_codes )
-	# Collection of Parameter objects
-	attr_reader( :parameters )
-	# Collection of Resource objects
-	attr_reader( :resources )
-	# Collection of Area objects
-	attr_reader( :areas )
-
-  def initialize( attributes = {} )
-    @language       = attributes[ :language ] || DEFAULT_LANGUAGE
-    @categories     = Array( attributes[ :categories ])
-    @event          = attributes [ :event ]
-    @response_types = Array( attributes[ :response_types ])
-    @urgency        = attributes[ :urgency ]
-    @severity       = attributes[ :severity ]
-    @certainty      = attributes[ :certainty ]
-    @effective      = attributes[ :effective ]
-    @onset          = attributes[ :onset ]
-    @expires        = attributes[ :expires ]
-    @event_codes    = Array( attributes[ :event_codes ])
-    @sender_name    = attributes[ :sender_name ]
-    @headline       = attributes[ :headline ]
-    @description    = attributes[ :description ]
-    @instruction    = attributes[ :instruction ]
-    @web            = attributes[ :web ]
-    @contact        = attributes[ :contact ]
-    @parameters     = Array( attributes[ :parameters ])
-    @resources      = Array( attributes[ :resources ])
-    @areas          = Array( attributes[ :areas ])
-  end
+  # def initialize( attributes = {} )
+  #   @language       = attributes[ :language ] || DEFAULT_LANGUAGE
+  #   @categories     = Array( attributes[ :categories ])
+  #   @event          = attributes [ :event ]
+  #   @response_types = Array( attributes[ :response_types ])
+  #   @urgency        = attributes[ :urgency ]
+  #   @severity       = attributes[ :severity ]
+  #   @certainty      = attributes[ :certainty ]
+  #   @effective      = attributes[ :effective ]
+  #   @onset          = attributes[ :onset ]
+  #   @expires        = attributes[ :expires ]
+  #   @event_codes    = Array( attributes[ :event_codes ])
+  #   @sender_name    = attributes[ :sender_name ]
+  #   @headline       = attributes[ :headline ]
+  #   @description    = attributes[ :description ]
+  #   @instruction    = attributes[ :instruction ]
+  #   @web            = attributes[ :web ]
+  #   @contact        = attributes[ :contact ]
+  #   @parameters     = Array( attributes[ :parameters ])
+  #   @resources      = Array( attributes[ :resources ])
+  #   @areas          = Array( attributes[ :areas ])
+  # end
 
   def to_xml_element # :nodoc:
     xml_element = REXML::Element.new( XML_ELEMENT_NAME )
@@ -197,9 +204,9 @@ class Info < ActiveRecord::Base
     @event_codes.each do |event_code|
       xml_element.add_element( event_code.to_xml_element )
     end
-    xml_element.add_element( EFFECTIVE_ELEMENT_NAME ).add_text( self.effective.to_s_for_cap ) if self.effective
-    xml_element.add_element( ONSET_ELEMENT_NAME ).add_text( self.onset.to_s_for_cap )         if self.onset
-    xml_element.add_element( EXPIRES_ELEMENT_NAME ).add_text( self.expires.to_s_for_cap )     if self.expires
+    xml_element.add_element( EFFECTIVE_ELEMENT_NAME ).add_text( self.effective_at.to_s_for_cap ) if self.effective_at
+    xml_element.add_element( ONSET_ELEMENT_NAME ).add_text( self.onset_at.to_s_for_cap )         if self.onset_at
+    xml_element.add_element( EXPIRES_ELEMENT_NAME ).add_text( self.expires_at.to_s_for_cap )     if self.expires_at
     xml_element.add_element( SENDER_NAME_ELEMENT_NAME ).add_text( self.sender_name )          if self.sender_name
     xml_element.add_element( HEADLINE_ELEMENT_NAME ).add_text( self.headline )                if self.headline
     xml_element.add_element( DESCRIPTION_ELEMENT_NAME ).add_text( self.description )          if self.description
@@ -233,9 +240,9 @@ Severity:       #{ self.severity }
 Certainty:      #{ self.certainty }
 Audience:       #{ self.audience }
 Event Codes:    #{ self.event_codes.inspect }
-Effective:      #{ self.effective }
-Onset:          #{ self.onset }
-Expires:        #{ self.expires }
+Effective:      #{ self.effective_at }
+Onset:          #{ self.onset_at }
+Expires:        #{ self.expires_at }
 Sender Name:    #{ self.sender_name }
 Headline:       #{ self.headline }
 Description:
@@ -269,9 +276,9 @@ EOF
       :severity       => RCAP.xpath_text( info_xml_element, SEVERITY_XPATH ),
       :certainty      => RCAP.xpath_text( info_xml_element, CERTAINTY_XPATH ),
       :audience       => RCAP.xpath_text( info_xml_element, AUDIENCE_XPATH ),
-      :effective      => (( effective = RCAP.xpath_first( info_xml_element, EFFECTIVE_XPATH )) ? DateTime.parse( effective.text ) : nil ),
-      :onset          => (( onset = RCAP.xpath_first( info_xml_element, ONSET_XPATH )) ? DateTime.parse( onset.text ) : nil ),
-      :expires        => (( expires = RCAP.xpath_first( info_xml_element, EXPIRES_XPATH )) ? DateTime.parse( expires.text ) : nil ),
+      :effective_at      => (( effective = RCAP.xpath_first( info_xml_element, EFFECTIVE_XPATH )) ? DateTime.parse( effective.text ) : nil ),
+      :onset_at          => (( onset = RCAP.xpath_first( info_xml_element, ONSET_XPATH )) ? DateTime.parse( onset.text ) : nil ),
+      :expires_at        => (( expires = RCAP.xpath_first( info_xml_element, EXPIRES_XPATH )) ? DateTime.parse( expires.text ) : nil ),
       :sender_name    => RCAP.xpath_text( info_xml_element, SENDER_NAME_XPATH ),
       :headline       => RCAP.xpath_text( info_xml_element, HEADLINE_XPATH ),
       :description    => RCAP.xpath_text( info_xml_element, DESCRIPTION_XPATH ),
@@ -325,9 +332,9 @@ EOF
       [ SEVERITY_YAML,       self.severity ],
       [ CERTAINTY_YAML,      self.certainty ],
       [ AUDIENCE_YAML,       self.audience ],
-      [ EFFECTIVE_YAML,      self.effective ],
-      [ ONSET_YAML,          self.onset ],
-      [ EXPIRES_YAML,        self.expires ],
+      [ EFFECTIVE_YAML,      self.effective_at ],
+      [ ONSET_YAML,          self.onset_at ],
+      [ EXPIRES_YAML,        self.expires_at ],
       [ SENDER_NAME_YAML,    self.sender_name ],
       [ HEADLINE_YAML,       self.headline ],
       [ DESCRIPTION_YAML,    self.description ],
@@ -351,9 +358,9 @@ EOF
       :severity       => info_yaml_data [ SEVERITY_YAML ],
       :certainty      => info_yaml_data [ CERTAINTY_YAML ],
       :audience       => info_yaml_data [ AUDIENCE_YAML ],
-      :effective      => ( effective = info_yaml_data[ EFFECTIVE_YAML ]).blank? ? nil : DateTime.parse( effective.to_s ),
-      :onset          => ( onset = info_yaml_data[ ONSET_YAML ]).blank? ? nil : DateTime.parse( onset.to_s ),
-      :expires        => ( expires = info_yaml_data[ EXPIRES_YAML ]).blank? ? nil : DateTime.parse( expires.to_s ),
+      :effective_at      => ( effective = info_yaml_data[ EFFECTIVE_YAML ]).blank? ? nil : DateTime.parse( effective.to_s ),
+      :onset_at          => ( onset = info_yaml_data[ ONSET_YAML ]).blank? ? nil : DateTime.parse( onset.to_s ),
+      :expires_at        => ( expires = info_yaml_data[ EXPIRES_YAML ]).blank? ? nil : DateTime.parse( expires.to_s ),
       :sender_name    => info_yaml_data [ SENDER_NAME_YAML ],
       :headline       => info_yaml_data [ HEADLINE_YAML ],
       :description    => info_yaml_data [ DESCRIPTION_YAML ],
@@ -398,9 +405,9 @@ EOF
                                    [ SEVERITY_KEY,       self.severity ],
                                    [ CERTAINTY_KEY,      self.certainty ],
                                    [ AUDIENCE_KEY,       self.audience ],
-                                   [ EFFECTIVE_KEY,      RCAP.to_s_for_cap( self.effective )],
-                                   [ ONSET_KEY,          RCAP.to_s_for_cap( self.onset )],
-                                   [ EXPIRES_KEY,        RCAP.to_s_for_cap( self.expires )],
+                                   [ EFFECTIVE_KEY,      RCAP.to_s_for_cap( self.effective_at )],
+                                   [ ONSET_KEY,          RCAP.to_s_for_cap( self.onset_at )],
+                                   [ EXPIRES_KEY,        RCAP.to_s_for_cap( self.expires_at )],
                                    [ SENDER_NAME_KEY,    self.sender_name ],
                                    [ HEADLINE_KEY,       self.headline ],
                                    [ DESCRIPTION_KEY,    self.description ],
@@ -422,9 +429,9 @@ EOF
               :severity       => info_hash[ SEVERITY_KEY ],
               :certainty      => info_hash[ CERTAINTY_KEY ],
               :audience       => info_hash[ AUDIENCE_KEY ],
-              :effective      => RCAP.parse_datetime( info_hash[ EFFECTIVE_KEY ]),
-              :onset          => RCAP.parse_datetime( info_hash[ ONSET_KEY ]),
-              :expires        => RCAP.parse_datetime( info_hash[ EXPIRES_KEY ]),
+              :effective_at      => RCAP.parse_datetime( info_hash[ EFFECTIVE_KEY ]),
+              :onset_at          => RCAP.parse_datetime( info_hash[ ONSET_KEY ]),
+              :expires_at        => RCAP.parse_datetime( info_hash[ EXPIRES_KEY ]),
               :sender_name    => info_hash[ SENDER_NAME_KEY ],
               :headline       => info_hash[ HEADLINE_KEY ],
               :description    => info_hash[ DESCRIPTION_KEY ],
@@ -435,5 +442,11 @@ EOF
               :event_codes    => Array( info_hash[ EVENT_CODES_KEY ]).map{ |event_code_hash| RCAP::EventCode.from_h( event_code_hash )},
               :parameters     => Array( info_hash[ PARAMETERS_KEY ]).map{ |parameter_hash| RCAP::Parameter.from_h( parameter_hash )},
               :areas          => Array( info_hash[ AREAS_KEY ]).map{ |area_hash| RCAP::Area.from_h( area_hash )})
+  end
+
+  private
+
+  def set_language
+    language = DEFAULT_LANGUAGE unless language
   end
 end

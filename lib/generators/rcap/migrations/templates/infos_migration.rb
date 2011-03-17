@@ -4,18 +4,24 @@ class CreateInfosTable < ActiveRecord::Migration
       t.integer :alert_id
 
       t.string :language
-      t.string :category
-      t.string :event_type
-      t.string :response_type
+      t.string :categories
+      t.string :event
+      t.string :response_types
       t.string :urgency
       t.string :severity
       t.string :certainty
+      t.string :audience
+      t.string :event_codes
       t.datetime :effective_at
       t.datetime :onset_at
       t.datetime :expires_at
       t.string :sender_name
-      t.text :description
-      t.text :instructions
+      t.text   :headline
+      t.text   :description
+      t.text   :instruction
+      t.string :web
+      t.string :contact
+      t.text   :parameters
 
       t.timestamps
     end

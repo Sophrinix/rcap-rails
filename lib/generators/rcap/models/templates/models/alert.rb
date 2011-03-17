@@ -13,9 +13,9 @@ class Alert < ActiveRecord::Base
   include RCAP
 
   belongs_to :user
-  has_many :items
+  has_many :infos
 
-  before_create :set_identifier
+  before_validation :set_identifier, :set_sent_at
 
   STATUS_ACTUAL   = "Actual"   # :nodoc:
   STATUS_EXERCISE = "Exercise" # :nodoc:
@@ -95,7 +95,7 @@ class Alert < ActiveRecord::Base
   # # Collection of Info objects
   # attr_reader( :infos )
 
-  validates_presence_of( :identifier, :sender, :sent, :status, :msg_type, :scope )
+  validates_presence_of( :identifier, :sender, :sent_at, :status, :msg_type, :scope )
 
   validates_inclusion_of( :status,   :in => VALID_STATUSES )
   validates_inclusion_of( :msg_type, :in => VALID_MSG_TYPES )
@@ -107,7 +107,7 @@ class Alert < ActiveRecord::Base
   validates_dependency_of( :addresses,   :on => :scope, :with_value => SCOPE_PRIVATE )
   validates_dependency_of( :restriction, :on => :scope, :with_value => SCOPE_RESTRICTED )
 
-  validates_collection_of( :infos )
+  # validates_collection_of( :infos )
 
   # def initialize( attributes = {})
   #   attributes = {} unless attributes
@@ -176,17 +176,17 @@ class Alert < ActiveRecord::Base
 CAP Version:  #{ RCAP::CAP_VERSION }
 Identifier:   #{ self.identifier }
 Sender:       #{ self.sender }
-Sent:         #{ self.sent }
+Sent:         #{ self.sent_at }
 Status:       #{ self.status }
 Message Type: #{ self.msg_type }
 Source:       #{ self.source }
 Scope:        #{ self.scope }
 Restriction:  #{ self.restriction }
-Addresses:    #{ self.addresses.to_s_for_cap }
+Addresses:    #{ self.addresses.to_s_for_cap if self.addresses }
 Code:         #{ self.code }
 Note:         #{ self.note }
-References:   #{ self.references.join( ' ' )}
-Incidents:    #{ self.incidents.join( ' ')}
+References:   #{ self.references.join( ' ' ) if self.references }
+Incidents:    #{ self.incidents.join( ' ') if self.incidents }
 Information:
 #{ self.infos.map{ |info| "  " + info.to_s }.join( "\n" )}
 EOF
@@ -203,7 +203,7 @@ EOF
   def self.from_xml_element( alert_xml_element ) # :nodoc:
     self.new( :identifier  => RCAP.xpath_text( alert_xml_element, RCAP::Alert::IDENTIFIER_XPATH ),
               :sender      => RCAP.xpath_text( alert_xml_element, SENDER_XPATH ),
-              :sent        => (( sent = RCAP.xpath_first( alert_xml_element, SENT_XPATH )) ? DateTime.parse( sent.text ) : nil ),
+              :sent_at     => (( sent = RCAP.xpath_first( alert_xml_element, SENT_XPATH )) ? DateTime.parse( sent.text ) : nil ),
               :status      => RCAP.xpath_text( alert_xml_element, STATUS_XPATH ),
               :msg_type    => RCAP.xpath_text( alert_xml_element, MSG_TYPE_XPATH ),
               :source      => RCAP.xpath_text( alert_xml_element, SOURCE_XPATH ),
@@ -213,8 +213,9 @@ EOF
               :code        => RCAP.xpath_text( alert_xml_element, CODE_XPATH ),
               :note        => RCAP.xpath_text( alert_xml_element, NOTE_XPATH ),
               :references  => (( references = RCAP.xpath_text( alert_xml_element, REFERENCES_XPATH )) ? references.split( ' ' ) : nil ),
-              :incidents   => (( incidents = RCAP.xpath_text( alert_xml_element, INCIDENTS_XPATH )) ? incidents.split( ' ' ) : nil ),
-              :infos       => RCAP.xpath_match( alert_xml_element, RCAP::Info::XPATH ).map{ |element| RCAP::Info.from_xml_element( element )})
+              :incidents   => (( incidents = RCAP.xpath_text( alert_xml_element, INCIDENTS_XPATH )) ? incidents.split( ' ' ) : nil )
+              # :infos       => RCAP.xpath_match( alert_xml_element, RCAP::Info::XPATH ).map{ |element| RCAP::Info.from_xml_element( element )}
+    )
   end
 
   def self.from_xml_document( xml_document ) # :nodoc:
@@ -248,7 +249,7 @@ EOF
       [ CAP_VERSION_YAML,  RCAP::CAP_VERSION ],
       [ IDENTIFIER_YAML,    self.identifier ],
       [ SENDER_YAML,        self.sender ],
-      [ SENT_YAML,          self.sent ],
+      [ SENT_YAML,          self.sent_at ],
       [ STATUS_YAML,        self.status ],
       [ MSG_TYPE_YAML,      self.msg_type ],
       [ SOURCE_YAML,        self.source ],
@@ -272,7 +273,7 @@ EOF
     Alert.new(
       :identifier  => alert_yaml_data[ IDENTIFIER_YAML ],
       :sender      => alert_yaml_data[ SENDER_YAML ],
-      :sent        => ( sent = alert_yaml_data[ SENT_YAML ]).blank? ? nil : DateTime.parse( sent.to_s ),
+      :sent_at     => ( sent = alert_yaml_data[ SENT_YAML ]).blank? ? nil : DateTime.parse( sent.to_s ),
       :status      => alert_yaml_data[ STATUS_YAML ],
       :msg_type    => alert_yaml_data[ MSG_TYPE_YAML ],
       :source      => alert_yaml_data[ SOURCE_YAML ],
@@ -282,8 +283,8 @@ EOF
       :code        => alert_yaml_data[ CODE_YAML ],
       :note        => alert_yaml_data[ NOTE_YAML ],
       :references  => alert_yaml_data[ REFERENCES_YAML ],
-      :incidents   => alert_yaml_data[ INCIDENTS_YAML ],
-      :infos       => Array( alert_yaml_data[ INFOS_YAML ]).map{ |info_yaml_data| RCAP::Info.from_yaml_data( info_yaml_data )}
+      :incidents   => alert_yaml_data[ INCIDENTS_YAML ]
+      # :infos       => Array( alert_yaml_data[ INFOS_YAML ]).map{ |info_yaml_data| RCAP::Info.from_yaml_data( info_yaml_data )}
     )
   end
 
@@ -327,7 +328,7 @@ EOF
     self.new(
       :identifier  => alert_hash[ IDENTIFIER_KEY ],
       :sender      => alert_hash[ SENDER_KEY ],
-      :sent        => RCAP.parse_datetime( alert_hash[ SENT_KEY ]),
+      :sent_at     => RCAP.parse_datetime( alert_hash[ SENT_KEY ]),
       :status      => alert_hash[ STATUS_KEY ],
       :msg_type    => alert_hash[ MSG_TYPE_KEY ],
       :source      => alert_hash[ SOURCE_KEY ],
@@ -337,8 +338,9 @@ EOF
       :code        => alert_hash[ CODE_KEY ],
       :note        => alert_hash[ NOTE_KEY ],
       :references  => alert_hash[ REFERENCES_KEY ],
-      :incidents   => alert_hash[ INCIDENTS_KEY ],
-      :infos       => Array( alert_hash[ INFOS_KEY ]).map{ |info_hash| RCAP::Info.from_h( info_hash )})
+      :incidents   => alert_hash[ INCIDENTS_KEY ]
+      # :infos       => Array( alert_hash[ INFOS_KEY ]).map{ |info_hash| RCAP::Info.from_h( info_hash )}
+    )
   end
 
   # Returns a JSON string representation of an Alert object
@@ -354,6 +356,10 @@ EOF
   private
 
   def set_identifier
-    identifer = UUIDTools::UUID.random_create.to_s unless identifier
+    self.identifier = UUIDTools::UUID.random_create.to_s if identifier.blank?
+  end
+
+  def set_sent_at
+    self.sent_at = Time.now if sent_at.blank?
   end
 end

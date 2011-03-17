@@ -5,7 +5,7 @@ class CreateAlertsTable < ActiveRecord::Migration
 
       t.string :identifier
       t.string :sender
-      t.datetime :sent
+      t.datetime :sent_at
       t.string :status
       t.string :msg_type
       t.string :source
