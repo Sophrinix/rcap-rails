@@ -1,5 +1,9 @@
 = Change Log
 
+== 1.0 - 16th March 2011
+
+* Added Rails generators [pgeorge]
+
 == 0.4 - 6th March 2011
 
 * Implemented Hash generation and parsing

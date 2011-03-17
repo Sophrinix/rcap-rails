@@ -3,13 +3,13 @@ require 'hanna/rdoctask'
 require 'spec/rake/spectask'
 
 SPEC = Gem::Specification.new do |gem|
-  gem.name = "rcap"
-  gem.version = "0.4"
-  gem.authors = [ "Farrel Lifson" ]
-  gem.email = "farrel.lifson@aimred.com"
-  gem.homepage = "http://www.aimred.com/projects/rcap"
+  gem.name = "rcap-rails"
+  gem.version = "1.0"
+  gem.authors = [ "Farrel Lifson", "Pat George" ]
+  gem.email = "pat.george@gmail.com"
+  gem.homepage = "https://github.com/pcg79/RCAP"
   gem.platform = Gem::Platform::RUBY
-  gem.summary = "CAP(Common Alerting Protocol) API"
+  gem.summary = "CAP (Common Alerting Protocol) API for Ruby on Rails"
   gem.files = Dir.glob("{lib,examples}/**/*")
   gem.require_path = "lib"
   gem.has_rdoc = true
@@ -17,7 +17,7 @@ SPEC = Gem::Specification.new do |gem|
   gem.add_dependency( 'assistance' )
   gem.add_dependency( 'json' )
   gem.add_dependency( 'uuidtools', '>= 2.0.0' )
-  gem.description = "A Ruby API providing parsing and generation of CAP(Common Alerting Protocol) messages."
+  gem.description = "A Ruby API providing parsing and generation of CAP (Common Alerting Protocol) messages for use with Rails."
   gem.test_files = Dir.glob("spec/*.rb")
 end
 
