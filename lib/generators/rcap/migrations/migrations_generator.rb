@@ -18,6 +18,7 @@ DESC
         Dir[File.join(MigrationsGenerator.source_root, '*_migration.rb')].each do |file|
           model = file[/(.*\/)?(.*)_migration.rb/, 2]
           migration_template file, "db/migrate/create_#{model}_table.rb"
+          Kernel::sleep 1
         end
       end
 

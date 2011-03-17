@@ -3,10 +3,19 @@ class CreateAlertsTable < ActiveRecord::Migration
     create_table :alerts do |t|
       t.integer :user_id
 
+      t.string :identifier
+      t.string :sender
+      t.datetime :sent
       t.string :status
-      t.string :type
+      t.string :msg_type
       t.string :source
-      t.text :restriction
+      t.string :scope
+      t.text   :restriction
+      t.text   :addresses
+      t.string :code
+      t.text   :note
+      t.text   :references
+      t.text   :incidents
 
       t.timestamps
     end
