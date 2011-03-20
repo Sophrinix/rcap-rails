@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Farrel Lifson", "Pat George"]
-  s.date = %q{2011-03-17}
+  s.date = %q{2011-03-20}
   s.description = %q{A Ruby API providing parsing and generation of CAP (Common Alerting Protocol) messages for use with Rails.}
   s.email = %q{pat.george@gmail.com}
   s.extra_rdoc_files = [
@@ -17,25 +17,24 @@ Gem::Specification.new do |s|
     "README.rdoc"
   ]
   s.files = [
-    "lib/generators/rcap/migration/migration_generators.rb",
-    "lib/generators/rcap/migration/templates/alerts_migration.rb",
-    "lib/generators/rcap/migration/templates/areas_migration.rb",
-    "lib/generators/rcap/migration/templates/infos_migration.rb",
-    "lib/generators/rcap/migration/templates/resources_migration.rb",
-    "lib/generators/rcap/model/model_generator.rb",
-    "lib/generators/rcap/model/templates/models/alert.rb",
-    "lib/generators/rcap/model/templates/models/area.rb",
-    "lib/generators/rcap/model/templates/models/circle.rb",
-    "lib/generators/rcap/model/templates/models/event_code.rb",
-    "lib/generators/rcap/model/templates/models/geocode.rb",
-    "lib/generators/rcap/model/templates/models/info.rb",
-    "lib/generators/rcap/model/templates/models/parameter.rb",
-    "lib/generators/rcap/model/templates/models/point.rb",
-    "lib/generators/rcap/model/templates/models/polygon.rb",
-    "lib/generators/rcap/model/templates/models/resource.rb",
-    "lib/generators/rcap/model/templates/models/utilities.rb",
-    "lib/generators/rcap/model/templates/models/validations.rb",
-    "lib/generators/rcap/model/templates/modules/rcap.rb"
+    "lib/generators/rcap/migrations/migrations_generator.rb",
+    "lib/generators/rcap/migrations/templates/alerts_migration.rb",
+    "lib/generators/rcap/migrations/templates/areas_migration.rb",
+    "lib/generators/rcap/migrations/templates/infos_migration.rb",
+    "lib/generators/rcap/migrations/templates/resources_migration.rb",
+    "lib/generators/rcap/models/models_generator.rb",
+    "lib/generators/rcap/models/templates/models/alert.rb",
+    "lib/generators/rcap/models/templates/models/area.rb",
+    "lib/generators/rcap/models/templates/models/circle.rb",
+    "lib/generators/rcap/models/templates/models/event_code.rb",
+    "lib/generators/rcap/models/templates/models/geocode.rb",
+    "lib/generators/rcap/models/templates/models/info.rb",
+    "lib/generators/rcap/models/templates/models/parameter.rb",
+    "lib/generators/rcap/models/templates/models/point.rb",
+    "lib/generators/rcap/models/templates/models/polygon.rb",
+    "lib/generators/rcap/models/templates/models/resource.rb",
+    "lib/generators/rcap/models/templates/modules/rcap.rb",
+    "lib/generators/rcap/models/templates/modules/validations.rb"
   ]
   s.homepage = %q{https://github.com/pcg79/RCAP}
   s.require_paths = ["lib"]
