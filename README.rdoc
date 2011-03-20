@@ -1,38 +1,56 @@
-= RCAP - Common Alerting Protocol for Ruby
+= rcap-rails - Common Alerting Protocol for Ruby on Rails
 
 == Overview
 
 The Common Alerting Protocol is a lightweight standard to facilitate the distribution of alerting data. RCAP is an implementation of the CAP in Ruby. It allows for the creation of RCAP messages from Ruby applications and the parsing of external messages.
 
-RCAP currently supports only CAP Version 1.1.
+RCAP currently supports only CAP Version 1.1 and rcap-rails only supports Rails 3.X.
+
+This gem is a set of generators for creating RCAP ActiveRecord models and migrations.
 
 == Version
 
-0.4
+1.3
 
 == Dependencies
 
-RCAP depends on the following gems
+rcap-rails depends on the following gems
 
 * {Assistance}[http://assistance.rubyforge.org]
 * {UUIDTools}[http://uuidtools.rubyforge.org]
 * {JSON}[http://json.rubyforge.org]
 
-RCAP uses the REXML API, included in Ruby, to parse and generate XML.
+rcap-rails uses the REXML API, included in Ruby, to parse and generate XML.
 
 == Installation
 
-RCAP is distributed as a Ruby gem and is available from {Gemcutter}[http://gemcutter.org]. If you have Gemcutter set as a source of your gems then RCAP can be installed from the command line
+rcap-rails is distributed as a Ruby gem and is available from {Gemcutter}[http://gemcutter.org]. If you have Gemcutter set as a source of your gems then rcap-rails can be installed from the command line
 
  gem install rcap
 
 The gem is also available for download and manual installtion at http://www.aimred.com/gems .
 
+Once installed you can run:
+
+ rails generate rcap:models
+
+and
+
+ rails generate rcap:migrations
+
+to create the respective files.
+
+rcap:models also installs a couple of necessary modules in your Rails.root/lib directory.  You will need to make sure they are required:
+
+# config/initializers/load_extensions.rb
+require 'rcap'
+require 'validations'
+
 == Web resources
 
-* The RCAP project page can be found at http://www.aimred.com/projects/rcap 
+* The RCAP project page can be found at http://www.aimred.com/projects/rcap
 * The RCAP API docs can be fount at http://www.aimred.com/projects/rcap/api
-* A public git repository can be found at git://github.com/farrel/RCAP.git 
+* A public git repository can be found at git://github.com/farrel/RCAP.git
 
 == Usage
 
@@ -43,16 +61,16 @@ To include RCAP into your application add the following require
 All RCAP classes reside in the RCAP namespace but including the RCAP module makes the classes available at the top level without the RCAP prefix.
 
  alert = RCAP::Alert.new(...
- 
+
  include RCAP # Include RCAP module into namespace
  alert = Alert.new(...
 
 === Creating an Alert
 
  alert = Alert.new( :sender   => 'cape_town_disaster_relief@capetown.municipal.za',
-                    :status   => Alert::STATUS_ACTUAL, 
+                    :status   => Alert::STATUS_ACTUAL,
                     :msg_type => Alert::MSG_TYPE_ALERT,
-                    :scope    => Alert::SCOPE_PUBLIC,  
+                    :scope    => Alert::SCOPE_PUBLIC,
                     :infos    => Info.new( :event       => 'Liquid Petroleoum Tanker Fire',
                                            :language    => 'en-ZA',
                                            :categories  => [ Info::CATEGORY_TRANSPORT, Info::CATEGORY_FIRE ],
@@ -62,7 +80,7 @@ All RCAP classes reside in the RCAP namespace but including the RCAP module make
                                            :headline    => 'LIQUID PETROLEOUM TANKER FIRE ON N2 INCOMING FREEWAY',
                                            :description => 'A liquid petroleoum tanker has caught fire on the N2 incoming freeway 1km
                                                            after the R300 interchange.  Municipal fire fighting crews have been dispatched.
-                                                           Traffic control officers are on the scene and have diverted traffic onto 
+                                                           Traffic control officers are on the scene and have diverted traffic onto
                                                            alternate routes.' ))
 
  # Accessing attributes
@@ -121,7 +139,7 @@ will produce the following YAML document
  Status: Actual
  Message Type: Alert
  Scope: Public
- Information: 
+ Information:
  - Language: en-ZA
    Categories: [Transport, Fire]
    Event: Liquid Petroleoum Tanker Fire
@@ -135,7 +153,7 @@ will produce the following YAML document
      Traffic control officers are on the scene and have diverted traffic onto
      alternate routes.
 
-Note: If you use Ruby 1.8 the order of the attributes is jumbled due to hashes being unorderd (Ruby 1.9 implements ordered hashes). This does not affect the ability to parse documents generated from RCAP::Alert#to_yaml, it just makes things the output slightly messy. 
+Note: If you use Ruby 1.8 the order of the attributes is jumbled due to hashes being unorderd (Ruby 1.9 implements ordered hashes). This does not affect the ability to parse documents generated from RCAP::Alert#to_yaml, it just makes things the output slightly messy.
 
 === To JSON
 
@@ -151,7 +169,7 @@ will produce the following JSON string
   "status":"Actual",
   "msg_type":"Alert",
   "scope":"Public",
-  "infos":[ 
+  "infos":[
     {"language":"en-ZA",
      "categories":["Transport","Fire"],
      "event":"Liquid Petroleoum Tanker Fire",
