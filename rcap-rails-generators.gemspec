@@ -4,12 +4,12 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{rcap-rails}
+  s.name = %q{rcap-rails-generators}
   s.version = "1.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Farrel Lifson", "Pat George"]
-  s.date = %q{2011-03-20}
+  s.date = %q{2011-03-21}
   s.description = %q{A Ruby API providing parsing and generation of CAP (Common Alerting Protocol) messages for use with Rails.}
   s.email = %q{pat.george@gmail.com}
   s.extra_rdoc_files = [
@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{https://github.com/pcg79/RCAP}
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.5.0}
+  s.rubygems_version = %q{1.6.2}
   s.summary = %q{CAP (Common Alerting Protocol) API for Ruby on Rails}
   s.test_files = [
     "spec/alert_spec.rb",

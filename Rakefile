@@ -12,7 +12,7 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "rcap-rails"
+  gem.name = "rcap-rails-generators"
   gem.version = "1.3"
   gem.authors = [ "Farrel Lifson", "Pat George" ]
   gem.email = "pat.george@gmail.com"

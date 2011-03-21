@@ -1,10 +1,10 @@
-= rcap-rails - Common Alerting Protocol for Ruby on Rails
+= rcap-rails-generators - Generators for the Common Alerting Protocol for Ruby on Rails
 
 == Overview
 
 The Common Alerting Protocol is a lightweight standard to facilitate the distribution of alerting data. RCAP is an implementation of the CAP in Ruby. It allows for the creation of RCAP messages from Ruby applications and the parsing of external messages.
 
-RCAP currently supports only CAP Version 1.1 and rcap-rails only supports Rails 3.X.
+RCAP currently supports only CAP Version 1.1 and rcap-rails-generators only supports Rails 3.X.
 
 This gem is a set of generators for creating RCAP ActiveRecord models and migrations.
 
@@ -14,19 +14,23 @@ This gem is a set of generators for creating RCAP ActiveRecord models and migrat
 
 == Dependencies
 
-rcap-rails depends on the following gems
+rcap-rails-generators depends on the following gems
 
 * {Assistance}[http://assistance.rubyforge.org]
 * {UUIDTools}[http://uuidtools.rubyforge.org]
 * {JSON}[http://json.rubyforge.org]
 
-rcap-rails uses the REXML API, included in Ruby, to parse and generate XML.
+rcap-rails-generators uses the REXML API, included in Ruby, to parse and generate XML.
 
 == Installation
 
-rcap-rails is distributed as a Ruby gem and is available from {Gemcutter}[http://gemcutter.org]. If you have Gemcutter set as a source of your gems then rcap-rails can be installed from the command line
+rcap-rails-generators is distributed as a Ruby gem and is available from {Gemcutter}[http://gemcutter.org]. If you have Gemcutter set as a source of your gems then rcap-rails-generators can be installed from the command line
 
- gem install rcap
+ gem install rcap-rails-generators
+
+or via Bundler
+
+ gem 'rcap-rails-generators'
 
 The gem is also available for download and manual installtion at http://www.aimred.com/gems .
 
