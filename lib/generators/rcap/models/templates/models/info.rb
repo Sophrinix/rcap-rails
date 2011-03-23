@@ -190,20 +190,20 @@ class Info < ActiveRecord::Base
   def to_xml_element # :nodoc:
     xml_element = REXML::Element.new( XML_ELEMENT_NAME )
     xml_element.add_element( LANGUAGE_ELEMENT_NAME ).add_text( self.language ) if self.language
-    @categories.each do |category|
+    self.categories.each do |category|
       xml_element.add_element( CATEGORY_ELEMENT_NAME ).add_text( category )
-    end
+    end if self.categories
     xml_element.add_element( EVENT_ELEMENT_NAME ).add_text( self.event )
-    @response_types.each do |response_type|
+    self.response_types.each do |response_type|
       xml_element.add_element( RESPONSE_TYPE_ELEMENT_NAME ).add_text( response_type )
-    end
+    end if self.response_types
     xml_element.add_element( URGENCY_ELEMENT_NAME ).add_text( self.urgency )
     xml_element.add_element( SEVERITY_ELEMENT_NAME ).add_text( self.severity )
     xml_element.add_element( CERTAINTY_ELEMENT_NAME ).add_text( self.certainty )
     xml_element.add_element( AUDIENCE_ELEMENT_NAME ).add_text( self.audience ) if self.audience
-    @event_codes.each do |event_code|
+    self.event_codes.each do |event_code|
       xml_element.add_element( event_code.to_xml_element )
-    end
+    end if self.event_codes
     xml_element.add_element( EFFECTIVE_ELEMENT_NAME ).add_text( self.effective_at.to_s_for_cap ) if self.effective_at
     xml_element.add_element( ONSET_ELEMENT_NAME ).add_text( self.onset_at.to_s_for_cap )         if self.onset_at
     xml_element.add_element( EXPIRES_ELEMENT_NAME ).add_text( self.expires_at.to_s_for_cap )     if self.expires_at
@@ -213,15 +213,15 @@ class Info < ActiveRecord::Base
     xml_element.add_element( INSTRUCTION_ELEMENT_NAME ).add_text( self.instruction )          if self.instruction
     xml_element.add_element( WEB_ELEMENT_NAME ).add_text( self.web )                          if self.web
     xml_element.add_element( CONTACT_ELEMENT_NAME ).add_text( self.contact )                  if self.contact
-    @parameters.each do |parameter|
+    self.parameters.each do |parameter|
       xml_element.add_element( parameter.to_xml_element )
-    end
-    @resources.each do |resource|
+    end if self.parameters
+    self.resources.each do |resource|
       xml_element.add_element( resource.to_xml_element )
-    end
-    @areas.each do |area|
+    end if self.resources
+    self.areas.each do |area|
       xml_element.add_element( area.to_xml_element )
-    end
+    end if self.areas
     xml_element
   end
 

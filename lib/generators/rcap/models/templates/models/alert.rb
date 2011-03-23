@@ -130,21 +130,21 @@ class Alert < ActiveRecord::Base
     xml_element.add_namespace( RCAP::XMLNS )
     xml_element.add_element( IDENTIFIER_ELEMENT_NAME ).add_text( self.identifier )
     xml_element.add_element( SENDER_ELEMENT_NAME ).add_text( self.sender )
-    xml_element.add_element( SENT_ELEMENT_NAME ).add_text( self.sent.to_s )
+    xml_element.add_element( SENT_ELEMENT_NAME ).add_text( self.sent_to.to_s )
     xml_element.add_element( STATUS_ELEMENT_NAME ).add_text( self.status )
     xml_element.add_element( MSG_TYPE_ELEMENT_NAME ).add_text( self.msg_type )
     xml_element.add_element( SOURCE_ELEMENT_NAME ).add_text( self.source ) if self.source
     xml_element.add_element( SCOPE_ELEMENT_NAME ).add_text( self.scope )
     xml_element.add_element( RESTRICTION_ELEMENT_NAME ).add_text( self.restriction ) if self.restriction
-    unless self.addresses.empty?
+    unless self.addresses.blank?
       xml_element.add_element( ADDRESSES_ELEMENT_NAME ).add_text( self.addresses.to_s_for_cap )
     end
     xml_element.add_element( CODE_ELEMENT_NAME ).add_text( self.code ) if self.code
     xml_element.add_element( NOTE_ELEMENT_NAME ).add_text( self.note ) if self.note
-    unless self.references.empty?
+    unless self.references.blank?
       xml_element.add_element( REFERENCES_ELEMENT_NAME ).add_text( self.references.join( ' ' ))
     end
-    unless self.incidents.empty?
+    unless self.incidents.blank?
       xml_element.add_element( INCIDENTS_ELEMENT_NAME ).add_text( self.incidents.join( ' ' ))
     end
     self.infos.each do |info|
@@ -166,9 +166,9 @@ class Alert < ActiveRecord::Base
   end
 
   # Returns a string representation of the alert suitable for usage as a reference in a CAP message of the form
-  #  sender,identifier,sent
+  #  sender,identifier,sent_at
   def to_reference
-    "#{ self.sender },#{ self.identifier },#{ self.sent }"
+    "#{ self.sender },#{ self.identifier },#{ self.sent_at }"
   end
 
   def inspect # :nodoc:
@@ -197,7 +197,7 @@ EOF
   #  sender/identifier/sent
   # See Alert#to_reference for another string representation suitable as a CAP reference.
   def to_s
-    "#{ self.sender }/#{ self.identifier }/#{ self.sent }"
+    "#{ self.sender }/#{ self.identifier }/#{ self.sent_at }"
   end
 
   def self.from_xml_element( alert_xml_element ) # :nodoc:
@@ -309,7 +309,7 @@ EOF
     RCAP.attribute_values_to_hash( [ CAP_VERSION_KEY, RCAP::CAP_VERSION ],
                                   [ IDENTIFIER_KEY,   self.identifier ],
                                   [ SENDER_KEY,       self.sender ],
-                                  [ SENT_KEY,         RCAP.to_s_for_cap( self.sent )],
+                                  [ SENT_KEY,         RCAP.to_s_for_cap( self.sent_at )],
                                   [ STATUS_KEY,       self.status ],
                                   [ MSG_TYPE_KEY,     self.msg_type ],
                                   [ SOURCE_KEY,       self.source ],
